@@ -1,0 +1,178 @@
+<!doctype html>
+<html>
+
+<head lang="zh.TW">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Week2 Homework</title>
+
+    <style>
+        #div1 {
+            height: 100px;
+            margin-left: 500px;
+        }
+        
+        #marioPng {
+            margin-left: 150px;
+            width: 100px;
+            height: 100px;
+        }
+        
+        #div2 {
+            background: lightgreen;
+            width: 200px;
+            height: 50px;
+            margin-left: 100px;
+        }
+        
+        #div3 {
+            background: lightgreen;
+            width: 150px;
+            height: 250px;
+            margin-left: 125px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    <!--    第一份-->
+    <div id="hwMario">
+        <div>
+            <img id="marioPng" src="https://spencerfsu15.files.wordpress.com/2015/09/mario_8bit.png">
+        </div>
+
+        <div id="div2"> </div>
+        <div id="div3"> </div>
+    </div>
+    第二份
+    <div id="hwRandom">
+        <p id="hw2Answer"></p>
+        <input type="button" value="啟動" onclick="launch()" font-size="20" width="100px">
+    </div>
+
+
+
+    <script>
+        function random(M, N) {
+            var output = Math.random() * (N - M + 1) + N;
+            output = Math.floor(output);
+            return output;
+        }
+
+        function launch() {
+            d3.select('#hw2Answer').text(random(1911, 2016));
+        }
+
+    </script>
+
+    <br> 第三份 樂譜
+    <div>
+
+        <svg id="svg1" width="300" height="200">
+        <rect x="1" y="0" width="450" height="180" fill="orange" ></rect>
+        <circle cx="150" cy="120" r="15"></circle>
+        <rect x="160" y="45" width ="5" height ="78"></rect>
+      
+
+    </svg>
+    </div>
+
+    <script>
+        for (var i = 0; i < 5; i++) {
+            d3.select("#svg1").append("line")
+                .attr("y1", 45 + 30 * i)
+                .attr("x2", 300)
+                .attr("y2", 45 + 30 * i)
+                .attr("stroke", "black")
+                .attr("stroke-width", 5);
+
+        }
+
+        d3.select("svg")
+            .append("text")
+            .attr("x", 135)
+            .attr("y", 200)
+            .attr("font-size", 35)
+            .text("G");
+
+    </script>
+
+
+    第四份 折線圖
+    <div id="hw4Poly">
+
+        <script>
+            var svg4 = d3.select("#hw4Poly").append("svg");
+            svg4.attr({
+                width: 400,
+                height: 500
+
+
+            })
+
+            for (var i = 0; i < 100; i = i + 1) {
+
+                var yValue = i * 20;
+                var num = random(20, 150);
+
+                svg4.append("rect").attr({
+                    x: 10,
+                    y: 10 + (i * 15),
+                    width: num,
+                    height: 10,
+                    fill: "red"
+                });
+
+                var y_1 = 0;
+                var x_2 = num;
+                var y_2 = 0;
+
+                if (i > 0) {
+
+                    y_1 = 10 + ((i - 1) * 15);
+                    y_2 = 10 + (i * 15);
+
+
+                } else if (i = 0) {
+                    var x_1 = 0;
+
+
+                }
+
+                if (i > 0) {
+                    svg4.append("line").attr({
+                        x1: x_1,
+                        y1: y_1,
+                        x2: x_2,
+                        y2: y_2,
+                        stroke: "blue"
+
+
+                    }).attr("stroke-width", 3);
+                }
+
+                console.log("test");
+                console.log(x_1);
+                console.log(y_1);
+                console.log(x_2);
+                console.log(y_2);
+                x_1 = num;
+
+                svg4.append("text").attr({
+                    x: 10 + num + 15,
+                    y: 10 + 15 * i + 10,
+                    "font-size": 12
+
+                }).text(num);
+
+
+            }
+
+        </script>
+    </div>
+</body>
+
+</html>
