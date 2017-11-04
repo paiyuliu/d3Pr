@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>week3 homework</title>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <h3>資料綁定練習</h3>
+        <div id="week3_hw1">
+
+        </div>
+        <script>
+            var arr = [85, 60, 99, 49, 77, 59];
+            bind(arr);
+            render();
+
+
+
+
+
+
+
+
+            function bind(dataset) {
+                var weekHw1 = d3.select("#week3_hw1");
+                var selection = weekHw1.selectAll("div").data(dataset);
+                selection.enter().append("div");
+                selection.exit().remove();
+
+
+            }
+
+            function render() {
+                console.log("render()");
+
+                d3.select("#week3_hw1").selectAll("div").text(function(d, i) {
+                    return i + ":" + d;
+                }).style({
+
+                    "font-size": 40,
+                    "color": function(d) {
+                        if (d < 70) {
+                            return "red";
+                        } else {
+                            return "blue";
+                        }
+                    }
+                })
+
+
+
+            }
+
+        </script>
+
+
+    </div>
+    第二份作業
+    <br>
+    <h3>barChart</h3>
+    <div id="barChart">
+        <input type="button" value="Add" onclick="add()" style="position:relative; left:40px; top: -20px; ">
+        <input type="button" value="Remove" onclick="removeItem()" style="position:relative;  left:80px; top: -20px; ">
+
+
+    </div>
+    <script>
+        var arr2 = [85, 60, 99, 49, 77, 59];
+        var w = 900;
+        var h = 250;
+        var p = 100;
+
+        svg();
+        binder2(arr2);
+        render2();
+
+
+        function svg() {
+            d3.select("#barChart").append("svg").attr({
+                "id": "barcharSVG",
+                "width": w,
+                "height": h
+
+            });
+        }
+
+        //databinding
+        function binder2(dataset) {
+
+            var svgBarChart = d3.select("#barcharSVG");
+
+            var selectionText = svgBarChart.selectAll("text").data(dataset);
+            selectionText.enter().append("text");
+            selectionText.exit().remove();
+
+            var selection = svgBarChart.selectAll("rect").data(dataset);
+            selection.enter().append("rect");
+            selection.exit().remove();
+
+
+        }
+
+        function render2() {
+
+
+            d3.selectAll("#barcharSVG>rect").attr({
+                x: function(d, i) {
+                    return p + 43 * i;
+                },
+                y: function(d) {
+
+                    return h - p - d;
+                },
+                width: 40,
+                height: function(d) {
+
+                    return d;
+                },
+                fill: function(d) {
+                    if (d < 70) {
+                        return "red";
+                    } else {
+                        return "lightgreen";
+                    }
+                }
+
+
+            });
+
+
+            d3.selectAll("#barcharSVG>text").attr({
+                "text-anchor": "middle",
+                x: function(d, i) {
+                    return p + 43 * i + 20;
+                },
+                y: function(d) {
+                    return h - p + 20;
+                }
+            }).text(function(d) {
+                return d;
+            });
+        }
+
+
+
+
+
+        function randomNumber(N, M) {
+            var randomScale = d3.scale.linear().domain([0, 1]).rangeRound([N, M + 1]);
+
+            return randomScale(Math.random());
+
+        }
+
+        function add() {
+            arr2.push(randomNumber(50, 100));
+            binder2(arr2);
+            render2();
+        }
+
+        function removeItem() {
+            var arr2Lengh = arr2.length;
+            arr2.pop();
+            //            delete arr2[arr2Lengh];
+            binder2(arr2);
+            render2();
+
+        }
+
+    </script>
+    <h2 id="h2Party" style="color: green">秀出各政黨的顏色</h2>
+    <select onchange="displayColor(this.value)">
+        <option value="民進黨">民進黨</option>
+        <option value="國民黨">國民黨</option>
+        <option value="親民黨">親民黨</option>
+        <option value="時代力量">時代力量</option>
+        
+    </select>
+    <script>
+        var partyList = ["民進黨", "國民黨", "親民黨", "時代力量"];
+        var colorList = ["green", "blue", "orange", "yellow"];
+        var partyScale = d3.scale.ordinal().domain(partyList).range(colorList);
+
+        function displayColor(partyName) {
+            console.log(partyScale(partyName));
+            h2Party = d3.select("#h2Party");
+            h2Party.style({
+                color: partyScale(partyName)
+            });
+
+        }
+
+    </script>
+</body>
+
+</html>
