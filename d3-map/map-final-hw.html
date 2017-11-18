@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <script src="https://d3js.org/d3.v3.js"></script>
+    <script src="topojson.min.js"></script>
+    <style>
+        .map-boundary {
+            stroke: #eee;
+        }
+
+    </style>
+</head>
+
+<body>
+    <select style="text-align: center;">
+        <option value="all">all</option>
+        <option value="2017">2017</option>
+        <option value="2016">2016</option>
+        <option value="2015">2015</option>
+        <option value="2014">2014</option>
+    </select>
+
+    <br>
+
+
+    <svg width="1200" height="700"></svg>
+
+    <script>
+        var projection;
+        var DataSet;
+        var mapDataSet2;
+        //1.地理資料檔: GeoJSON or TopoJSON
+        var data2;
+        d3.csv("zip_address.csv", function(DataSet) {
+            //            console.log(DataSet);
+            d3.json("tw-map-topo.json", function(mapDataSet) {
+                //                console.log(mapDataSet);
+                data2 = DataSet;
+                allDataSet = DataSet.filter(function(d) {
+                    if (d.year == "all") {
+                        return true;
+                    } else {
+                        return false;
+                    }
+
+                })
+
+
+                mapDataSet2 = mapDataSet;
+                bind(mapDataSet, allDataSet);
+                render();
+
+            })
+
+
+
+
+        });
+
+        //        d3.json("DengueLast12.Geo.json", function(DataSet) {
+        //            //        d3.json("world-map-geo.json", function(mapDataSet) {
+        //            d3.json("tw-map-topo.json", function(mapDataSet) {
+        //                console.log(mapDataSet);
+        //
+        //                bind(mapDataSet, DataSet);
+        //                render();
+        //
+        //            })
+        //        })
+
+
+        function render() {
+            //從這裡開始修改
+            var fScale = d3.scale.category20();
+            var tmp_color;
+
+            d3.selectAll("path")
+                .attr({
+                    fill: function(d, i) {
+                        return "black"
+                    }
+                })
+            d3.selectAll("circle").attr({
+                cx: function(d) {
+                    //                    return projection([+d["最小統計區中心點X"], +d["最小統計區中心點Y"]])[0]
+                    return projection([+d.longitude, +d.latitude])[0]
+                },
+                cy: function(d) {
+                    //                    return projection([+d["最小統計區中心點X"], +d["最小統計區中心點Y"]])[1]
+                    return projection([+d.longitude, +d.latitude])[1]
+                },
+                r: function(d) {
+                    return d.painIndex;
+                },
+                fill: "gold"
+            })
+
+        }
+
+
+        function bind(topoRoot, DataSet) {
+
+            // 2.地理投影器: 設定投影方式(麥卡托)、定位點([經度,緯度])、縮放(scale)
+            //projection = d3.geo.mercator().center([121, 24]).scale(5000);
+            projection = d3.geo.mercator().center([120.3440, 23.47292]).scale(5000);
+            //            console.log(projection([120.3, 22.7]))
+
+
+
+            // 3.路徑產生器: d3.geo.path()
+            var path = d3.geo.path().projection(projection);
+
+            // 4.地理資料檔: 使用topojson.js載入地理資料 
+            var geoRoot = topojson.feature(topoRoot, topoRoot.objects["COUNTY_MOI_1060525"]);
+
+            // 綁定path與載入的地理資料(features:每一地理區劃)
+            var selection = d3.select("svg").selectAll("path").data(geoRoot.features);
+
+            selection.enter().append("path").classed("map-boundary", true).attr("d", path);
+            selection.exit().remove();
+
+            var selection_c = d3.select("svg").selectAll("circle").data(DataSet);
+            selection_c.enter().append("circle");
+            selection_c.exit().remove();
+
+
+        }
+
+    </script>
+    <script>
+        var select = d3.select("body select").on('change', onchange);
+        //        select.onchange(onchange());
+
+        //        onchange();
+
+        function onchange() {
+            selectValue = d3.select('body select').property('value')
+                //            d3.select('body') // .append('p') // .text(selectValue + ' is the last selected option.')
+                //            console.log("data2");
+                //            console.log(data2);
+            console.log("selectValue = " + selectValue);
+            var data3 = data2.filter(function(d) {
+                if (d.year == selectValue) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+            //            console.log(data3);
+            bind(mapDataSet2, data3);
+            render();
+
+
+            //            console.log(d3.select("svg").data(dat));
+        };
+
+    </script>
+
+</body>
+
+</html>
